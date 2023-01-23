@@ -10,7 +10,7 @@ namespace eTicket.Data
     public class AppDbContext : DbContext
     {
         //constructor
-        public AppDbContext(DbContextOptions<AppDbContext> options) : base()
+        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
         }
 
