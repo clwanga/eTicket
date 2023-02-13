@@ -10,16 +10,16 @@ namespace eTicket.Controllers
 {
     public class ProducersController : Controller
     {
-        public readonly AppDbContext _context;
+        public readonly AppDbContext _context; //database linking file
 
-        public ProducersController(AppDbContext context)
+        public ProducersController(AppDbContext context) //constructor
         {
             _context = context;
         }
         public async Task<IActionResult> Index()
         {
             var allProducersData = await _context.Producers.ToListAsync();
-            return View();
+            return View(allProducersData);
         }
     }
 }
