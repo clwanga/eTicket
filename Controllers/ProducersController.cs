@@ -1,4 +1,6 @@
 ﻿using eTicket.Data;
+using eTicket.Data.Services;
+using eTicket.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -10,16 +12,64 @@ namespace eTicket.Controllers
 {
     public class ProducersController : Controller
     {
-        public readonly AppDbContext _context; //database linking file
+        public readonly IProducersService _service; //database linking file
 
-        public ProducersController(AppDbContext context) //constructor
+        public ProducersController(IProducersService service) //constructor
         {
-            _context = context;
+            _service = service;
         }
         public async Task<IActionResult> Index()
         {
-            var allProducersData = await _context.Producers.ToListAsync();
+            var allProducersData = await _service.GetAllAsync();
+
             return View(allProducersData);
+        }
+
+        //details part
+        public async Task<IActionResult> Details(int id)
+        {
+            var result = await _service.GetByIdAsync(id);
+            if (result == null) return View("NotFound");
+            return View(result);
+        }
+
+        //edit action to view details to edit
+        public async Task<IActionResult> Edit(int id)
+        {
+            var result = await _service.GetByIdAsync(id);
+            if (result == null) return View("NotFound");
+            return View(result);
+        }
+
+        //edit action that processes the update request
+        [HttpPost]
+        public async Task<IActionResult> Edit(int id, [Bind("Id,FullName,ProfilePictureURL,Bio")]Producers producer)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(producer);
+            }
+            else
+            {
+                await _service.UpdateAsync(id, producer);
+                return RedirectToAction(nameof(Index));
+            }
+        }
+
+        //delete view controller action 
+        public async Task<IActionResult> Delete(int id)
+        {
+            var result = await _service.GetByIdAsync(id);
+            if (result == null) return View("NotFound");
+            return View(result);
+        }
+
+        //handles the delete action
+        [HttpPost]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            await _service.DeleteAsync(id);
+            return RedirectToAction(nameof(Index));
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using eTicket.Data.Base;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -6,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace eTicket.Models
 {
-    public class Actors
+    public class Actors:IEntityBase
     {
         [Key]
         public int Id { get; set; }
