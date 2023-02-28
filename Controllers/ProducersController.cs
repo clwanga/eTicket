@@ -71,5 +71,19 @@ namespace eTicket.Controllers
             await _service.DeleteAsync(id);
             return RedirectToAction(nameof(Index));
         }
+
+        //create producer
+        public IActionResult AddProducer()
+        {
+            return View();
+        }
+
+        //action that handles http request to add user to db
+        [HttpPost]
+        public async Task<IActionResult> AddProducer(Producers producer)
+        {
+            await _service.AddAsync(producer);
+            return RedirectToAction(nameof(Index));
+        }
     }
 }

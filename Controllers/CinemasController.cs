@@ -1,4 +1,6 @@
 ﻿using eTicket.Data;
+using eTicket.Data.Services;
+using eTicket.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -10,16 +12,61 @@ namespace eTicket.Controllers
 {
     public class CinemasController : Controller
     {
-        public readonly AppDbContext _context;
+        public readonly ICinemasService _service;
 
-        public CinemasController(AppDbContext context)
+        public CinemasController(ICinemasService service)
         {
-            _context = context;
+            _service = service;
         }
         public async Task<IActionResult> Index()
         {
-            var allCinemaData = await _context.Cinemas.ToListAsync();
+            var allCinemaData = await _service.GetAllAsync();
             return View(allCinemaData);
+        }
+
+        //controller that handles the edit view
+        public async Task<IActionResult> Edit(int id)
+        {
+            var result = await _service.GetByIdAsync(id);
+            if (result != null)
+            {
+                return View(result);
+            }
+            else
+            {
+                return View("NotFound");
+            }
+
+        }
+
+        //controller that handles the edit request
+        [HttpPost]
+        public async Task<IActionResult> Edit(int id, Cinemas cinema)
+        {
+            await _service.UpdateAsync(id, cinema);
+            return RedirectToAction(nameof(Index));
+        }
+
+        //delete view 
+        public async Task<IActionResult> Delete(int id)
+        {
+            var result = await _service.GetByIdAsync(id);
+            if (result != null)
+            {
+                return View(result);
+            }
+            else
+            {
+                return View("NotFound");
+            }
+        }
+
+        //action to handle the post request
+        [HttpPost]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            await _service.DeleteAsync(id);
+            return RedirectToAction(nameof(Index));
         }
     }
 }
