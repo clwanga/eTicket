@@ -35,6 +35,9 @@ namespace eTicket.Data
         public DbSet<Producers> Producers { get; set; }
         public DbSet<Movies> Movies { get; set; }
         public DbSet<Actor_Movies> Actors_Movies { get; set; }
+        public DbSet<Order> Order { get; set; }
+        public DbSet<OrderItem> OrderItems { get; set; }
+        public DbSet<ShoppingCartItem> ShoppingCartItems { get; set; }
 
     }
 }

@@ -75,5 +75,37 @@ namespace eTicket.Data.Services
 
             return response;
         }
+
+        public async Task UpdateNewMovieAsync(NewMovieVM data)
+        {
+            //get data from the database
+            var dbDetails = await _context.Movies.FirstOrDefaultAsync(n => n.Id == data.Id);
+            if(dbDetails != null)
+            {
+                dbDetails.Name = data.Name;
+                dbDetails.Description = data.Description;
+                dbDetails.Price = data.Price;
+                dbDetails.ImageURL = data.ImageURL;
+                dbDetails.CinemaId = data.CinemaId;
+                dbDetails.StartDate = data.StartDate;
+                dbDetails.EndDate = data.EndDate;
+                dbDetails.MovieCategory = data.MovieCategory;
+                dbDetails.ProducerId = data.ProducerId;
+            }
+            await _context.SaveChangesAsync();
+
+            //adding actors
+            foreach (var actorId in data.ActorIds)
+            {
+                var newActorMovie = new Actor_Movies()
+                {
+                    MovieID = data.Id,
+                    ActorID = actorId
+                };
+
+                await _context.Actors_Movies.AddAsync(newActorMovie);
+            }
+            await _context.SaveChangesAsync();
+        }
     }
 }

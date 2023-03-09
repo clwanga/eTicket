@@ -13,5 +13,6 @@ namespace eTicket.Data.Services
         Task<Movies> GetMoviesByIdAsync(int id);
         Task<NewMovieDropdownVM> GetNewMovieDropdownValues();
         Task AddNewMovieAsync(NewMovieVM data);
+        Task UpdateNewMovieAsync(NewMovieVM data);
     }
 }

@@ -11,6 +11,8 @@ namespace eTicket.Models
 {
     public class NewMovieVM
     {
+        public int Id { get; set; }
+
         [Display(Name = "Movie name")]
         [Required(ErrorMessage = "Movie name cannot be empty")]
         public string Name { get; set; }
