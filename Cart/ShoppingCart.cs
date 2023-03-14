@@ -1,6 +1,8 @@
 ﻿using eTicket.Data;
 using eTicket.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,6 +21,20 @@ namespace eTicket.Cart
         public ShoppingCart(AppDbContext context)
         {
             _context = context;
+        }
+
+        public static ShoppingCart GetShoppingCart(IServiceProvider services)
+        {
+            ISession session = services.GetRequiredService<IHttpContextAccessor>()?.HttpContext.Session;
+            var context = services.GetService<AppDbContext>();
+
+            string cartId = session.GetString("CartId") ?? Guid.NewGuid().ToString();
+            session.SetString("CartId", cartId);
+
+            return new ShoppingCart(context)
+            {
+                ShoppingCartId = cartId
+            };
         }
 
         //methods
@@ -44,6 +60,25 @@ namespace eTicket.Cart
             }
             _context.SaveChanges();
 
+        }
+
+        public void RemoveItemFromCart(Movies movie)
+        {
+            //check if item exist to the database
+            var shoppingCartItem = _context.ShoppingCartItems.FirstOrDefault(n => n.ShoppingCartId == ShoppingCartId && n.Movie.Id == movie.Id);
+
+            if (shoppingCartItem != null)
+            {
+                if (shoppingCartItem.Amount > 1)
+                {
+                    shoppingCartItem.Amount--;
+                }
+                else
+                {
+                    _context.ShoppingCartItems.Remove(shoppingCartItem);
+                }
+            }
+            _context.SaveChanges();
         }
         public List<ShoppingCartItem> GetShoppingCartItems()
         {
