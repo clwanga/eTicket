@@ -92,6 +92,13 @@ namespace eTicket.Cart
             return total;
         }
 
+        public async Task ClearShoppingCartAsync()
+        {
+            var items = _context.ShoppingCartItems.Where(n => n.ShoppingCartId == ShoppingCartId).ToList();
+            _context.ShoppingCartItems.RemoveRange(items);
+
+            await _context.SaveChangesAsync();
+        }
 
     }
 }

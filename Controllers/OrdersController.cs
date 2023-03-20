@@ -13,12 +13,23 @@ namespace eTicket.Controllers
     {
         private readonly IMoviesService _service;
         private readonly ShoppingCart _shoppingCart;
+        private readonly IOrdersService _ordersService;
 
         //constructor
-        public OrdersController(IMoviesService service, ShoppingCart shoppingCart)
+        public OrdersController(IMoviesService service, ShoppingCart shoppingCart, IOrdersService ordersService)
         {
             _service = service;
             _shoppingCart = shoppingCart;
+            _ordersService = ordersService;
+        }
+
+        public async Task<IActionResult> Index()
+        {
+            string userId = string.Empty;
+            var allOrders = await _ordersService.GetOrdersByIdAsync(userId);
+
+            return View(allOrders);
+
         }
         public IActionResult ShoppingCart()
         {
@@ -55,6 +66,20 @@ namespace eTicket.Controllers
             }
 
             return RedirectToAction(nameof(ShoppingCart));
+        }
+
+        public async Task<IActionResult> CompleteOrder()
+        {
+            var items = _shoppingCart.GetShoppingCartItems();
+            var userId = string.Empty;
+            var emailAddress = string.Empty;
+
+            await _ordersService.StoreOrderAsync(items, userId, emailAddress); //store
+            await _shoppingCart.ClearShoppingCartAsync();
+
+            return View("OrderCompleted");
+
+
         }
     }
 }
